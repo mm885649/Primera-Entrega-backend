@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Real-Time Products</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        socket.on('products', (products) => {
+            updateProductList(products);
+        });
+
+        socket.on('productAdded', (product) => {
+            addProductToList(product);
+        });
+
+        socket.on('productDeleted', (id) => {
+            removeProductFromList(id);
+        });
+
+        function updateProductList(products) {
+            const productList = document.getElementById('product-list');
+            productList.innerHTML = '';
+            products.forEach(product => {
+                const li = document.createElement('li');
+                li.textContent = `${product.name} - ${product.price}`;
+                productList.appendChild(li);
+            });
+        }
+
+        function addProductToList(product) {
+            const productList = document.getElementById('product-list');
+            const li = document.createElement('li');
+            li.textContent = `${product.name} - ${product.price}`;
+            productList.appendChild(li);
+        }
+
+        function removeProductFromList(id) {
+            const productList = document.getElementById('product-list');
+            const items = productList.getElementsByTagName('li');
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].dataset.id === id) {
+                    productList.removeChild(items[i]);
+                    break;
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Lista de Productos en Tiempo Real</h1>
+    <ul id="product-list">
+        {{#each products}}
+            <li data-id="{{this.id}}">{{this.name}} - {{this.price}}</li>
+        {{/each}}
+    </ul>
+    <form action="/addproduct" method="POST">
+        <input type="text" name="name" placeholder="Nombre del producto" required>
+        <input type="number" name="price" placeholder="Precio del producto" required>
+        <button type="submit">Agregar Producto</button>
+    </form>
+    <form action="/deleteproduct" method="POST">
+        <input type="text" name="id" placeholder="ID del producto" required>
+        <button type="submit">Eliminar Producto</button>
+    </form>
+</body>
+</html>
