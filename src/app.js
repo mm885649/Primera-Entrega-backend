@@ -32,11 +32,11 @@ let products = [];
 
 // Rutas
 app.get('/', (req, res) => {
-    res.render('home', { products });
+  res.render('home', { products });
 });
 
 app.get('/realtimeproducts', (req, res) => {
-    res.render('realTimeProducts', { products });
+  res.render('realTimeProducts', { products });
 });
 
 app.post('/addproduct', (req, res) => {
@@ -44,14 +44,14 @@ app.post('/addproduct', (req, res) => {
     products.push(product);
     io.emit('productAdded', product);
     res.redirect('/realtimeproducts');
-});
+  });
 
 app.post('/deleteproduct', (req, res) => {
     const { id } = req.body;
     products = products.filter(product => product.id !== id);
     io.emit('productDeleted', id);
     res.redirect('/realtimeproducts');
-});
+  });
 
 // Configuración de Socket.io
 io.on('connection', (socket) => {
